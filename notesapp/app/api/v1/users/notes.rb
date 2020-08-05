@@ -69,6 +69,19 @@ module V1
           note.make_private
           render_success(message: 'Note is Private now', data: serialized_data(note))
         end
+
+        desc 'delete a note'
+        params do
+        end
+        delete ':id' do
+          note = current_user.notes.find(params[:id])
+          if note.destroy
+            render_success(message: 'Note deleted')
+          else
+            render_error(message: note.errors.full_messages.join(', '))
+          end
+        end
+
       end
     end
   end
