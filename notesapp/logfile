@@ -1,0 +1,23 @@
+2020-08-03 15:05:12.099 IST [40357] LOG:  starting PostgreSQL 12.3 on x86_64-apple-darwin19.4.0, compiled by Apple clang version 11.0.3 (clang-1103.0.32.59), 64-bit
+2020-08-03 15:05:12.101 IST [40357] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2020-08-03 15:05:12.101 IST [40357] LOG:  listening on IPv6 address "::1", port 5432
+2020-08-03 15:05:12.102 IST [40357] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2020-08-03 15:05:12.117 IST [40358] LOG:  database system was shut down at 2020-08-03 15:05:08 IST
+2020-08-03 15:05:12.122 IST [40357] LOG:  database system is ready to accept connections
+2020-08-03 15:05:15.396 IST [40370] FATAL:  database "amitbansal" does not exist
+2020-08-03 15:05:46.996 IST [40380] ERROR:  syntax error at or near "db" at character 8
+2020-08-03 15:05:46.996 IST [40380] STATEMENT:  create db counterapp_dev;
+2020-08-03 15:08:59.600 IST [40799] ERROR:  syntax error at or near "ls" at character 1
+2020-08-03 15:08:59.600 IST [40799] STATEMENT:  ls
+	select * from users;
+2020-08-03 17:13:52.562 IST [44817] ERROR:  null value in column "name" violates not-null constraint
+2020-08-03 17:13:52.562 IST [44817] DETAIL:  Failing row contains (1, 007amitbansal@gmail.com, $2a$12$D72weZNzHfoWA8GhiKyTsO6cNP97Bw9tTzmVDV6WNTAp2M0vSeqEK, null, amitbansal, null, null, null, null, null, 2020-08-03 11:43:52.557985, 2020-08-03 11:43:52.557985).
+2020-08-03 17:13:52.562 IST [44817] STATEMENT:  INSERT INTO "users" ("email", "encrypted_password", "username", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"
+2020-08-03 18:06:24.835 IST [44990] ERROR:  cached plan must not change result type
+2020-08-03 18:06:24.835 IST [44990] STATEMENT:  SELECT "users".* FROM "users" WHERE "users"."deleted_at" IS NULL ORDER BY "users"."id" DESC LIMIT $1
+2020-08-03 18:13:47.027 IST [45911] ERROR:  column "confirmation_token" does not exist
+2020-08-03 18:13:47.027 IST [45911] STATEMENT:  CREATE UNIQUE INDEX  "index_users_on_confirmation_token" ON "users"  ("confirmation_token")
+2020-08-03 18:16:15.236 IST [46066] ERROR:  column "confirmation_token" does not exist
+2020-08-03 18:16:15.236 IST [46066] STATEMENT:  CREATE UNIQUE INDEX  "index_users_on_confirmation_token" ON "users"  ("confirmation_token")
+2020-08-03 18:17:58.621 IST [46126] ERROR:  column "confirmation_token" does not exist
+2020-08-03 18:17:58.621 IST [46126] STATEMENT:  CREATE UNIQUE INDEX  "index_users_on_confirmation_token" ON "users"  ("confirmation_token")
