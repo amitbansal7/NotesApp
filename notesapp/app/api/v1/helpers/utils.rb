@@ -21,10 +21,11 @@ module V1
         Rack::Utils::SYMBOL_TO_STATUS_CODE[symbol.to_sym]
       end
 
-      def user_json(user)
-        return {} unless user
+      def serialized_data(object)
+        return {} unless object
 
-        UserSerializer.new(user).serializable_hash.dig(:data, :attributes)
+        serializer_class = (object.class.to_s + 'Serializer').constantize
+        serializer_class.new(object).serializable_hash.dig(:data, :attributes)
       end
 
       params :pagination do

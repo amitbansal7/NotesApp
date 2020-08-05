@@ -6,7 +6,7 @@ module V1
       end
 
       def self.secret_header
-        'Counter-App-V1-Secret'.freeze
+        'Notesapp-V1-Secret'.freeze
       end
     end
   end

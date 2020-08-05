@@ -4,20 +4,13 @@ module V1
 
     helpers V1::Helpers::Utils
 
-    mount V1::Open::Base
-    mount V1::Users::Base
-
     helpers do
       def permitted_params
         @permitted_params ||= declared(params, include_mission: false)
       end
     end
 
-    rescue_from ActiveRecord::RecordNotFound do
-      error!({ message: 'Not Found' }, 404)
-    end
-    rescue_from ActionController::RoutingError do
-      error!({ message: 'Not Found' }, 404)
-    end
+    mount V1::Open::Base
+    mount V1::Users::Base
   end
 end

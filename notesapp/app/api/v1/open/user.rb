@@ -25,10 +25,10 @@ module V1
           user = ::User.where(email: permitted_params[:username_or_email])
                        .or(::User.where(username: permitted_params[:username_or_email])).first
 
-          if user.blank? || !user.valid_password?(permitted_params[:password])
-            render_error(message: 'Username/Email or password is invalid')
+          if user.present? && user.valid_password?(permitted_params[:password])
+            render_success(message: 'Login successful', data: serialized_data(user))
           else
-            render_success(message: 'Login successful', data: { user: user_json(user) })
+            render_error(message: 'Username/Email or password is invalid')
           end
         end
 
@@ -38,10 +38,10 @@ module V1
         get 'auth' do
           user = ::User.where(auth_token: permitted_params[:auth_token]).first
 
-          if user.blank?
-            render_error(message: 'Not authenticated', data: { authenticated: false })
+          if user.present?
+            render_success(message: 'Authenticated', data: { authenticated: true, user: serialized_data(user) })
           else
-            render_success(message: 'Authenticated', data: { authenticated: true, user: user_json(user) })
+            render_error(message: 'Not authenticated', data: { authenticated: false })
           end
         end
       end
