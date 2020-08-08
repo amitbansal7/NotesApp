@@ -11,6 +11,6 @@ module V1
     end
 
     mount V1::Open::Base
-    mount V1::Users::Base
+    mount V1::Authenticated::Base
   end
 end

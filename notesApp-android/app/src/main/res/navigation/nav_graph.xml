@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
 
@@ -9,20 +8,47 @@
         android:id="@+id/action_login_fragment"
         app:destination="@+id/loginFragment" />
 
+    <action
+        android:id="@+id/action_notes_fragment"
+        app:popUpToInclusive="true"
+        app:popUpTo="@id/nav_graph"
+        app:destination="@+id/notesFragment" />
+
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.amitbansal.notesapp.fragments.LoginFragment"
+        android:name="com.amitbansal.notesapp.ui.fragments.LoginFragment"
         android:label="LoginFragment">
         <action
             android:id="@+id/action_loginFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment" />
+            app:destination="@id/signUpFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_loginFragment_to_notesFragment"
+            app:destination="@id/notesFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.amitbansal.notesapp.fragments.SignUpFragment"
+        android:name="com.amitbansal.notesapp.ui.fragments.SignUpFragment"
         android:label="SignUpFragment">
         <action
             android:id="@+id/action_signUpFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/signUpFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_signUpFragment_to_notesFragment"
+            app:destination="@id/notesFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/notesFragment"
+        android:name="com.amitbansal.notesapp.ui.fragments.NotesFragment"
+        android:label="NotesFragment" >
+
+
     </fragment>
 </navigation>

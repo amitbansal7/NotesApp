@@ -5,7 +5,7 @@ module V1
         deny_access unless V1::Services::SecretAuthenticator.valid?(headers)
       end
 
-      namespace :g do
+      namespace :o do
         mount V1::Open::User
       end
     end

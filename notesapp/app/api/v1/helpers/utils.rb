@@ -3,12 +3,12 @@ module V1
     module Utils
       extend Grape::API::Helpers
 
-      def render_error(code: 422, message: '', data: {})
+      def render_error(code: 422, message: '', data: nil)
         status code
         { message: message, data: data }
       end
 
-      def render_success(code: 200, message: '', data: {})
+      def render_success(code: 200, message: '', data: nil)
         status code
         { message: message, data: data }
       end

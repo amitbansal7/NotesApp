@@ -1,5 +1,5 @@
 module V1
-  module Users
+  module Authenticated
     class Base < Grape::API
       helpers V1::Helpers::Authentication
       helpers V1::Helpers::Utils
@@ -8,10 +8,8 @@ module V1
         authenticate!
       end
 
-      namespace :users do
-        mount V1::Users::Notes
-        mount V1::Users::User
-      end
+      mount V1::Authenticated::Notes
+      mount V1::Authenticated::User
     end
   end
 end

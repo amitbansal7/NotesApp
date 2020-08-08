@@ -14,8 +14,9 @@ class User < ApplicationRecord
   # validations
   validates_plausible_phone :phone_number
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates_presence_of :email, :username
-  validates_uniqueness_of :email, :username
+  validates_presence_of :email
+  validates_uniqueness_of :email
+  validates_uniqueness_of :username, allow_blank: false, allow_nil: true
 
   has_many :notes
 

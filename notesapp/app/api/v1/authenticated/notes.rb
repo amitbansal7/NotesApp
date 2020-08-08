@@ -1,5 +1,5 @@
 module V1
-  module Users
+  module Authenticated
     class Notes < Grape::API
       helpers V1::Helpers::NotesHelper
       helpers V1::Helpers::Utils

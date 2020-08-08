@@ -5,13 +5,13 @@ module V1
         params do
           requires :email, type: String, allow_blank: false
           requires :password, type: String, allow_blank: false
-          requires :username, type: String, allow_blank: false
+          optional :username, type: String, allow_blank: false
           optional :phone_number, type: String, allow_blank: true
         end
         post 'signup' do
           user = ::User.create(permitted_params)
           if user.save
-            render_success(message: 'User Created')
+            render_success(message: 'Signup successful', data: serialized_data(user))
           else
             render_error(message: user.errors.full_messages.join(', '))
           end

@@ -1,5 +1,5 @@
 module V1
-  module Users
+  module Authenticated
     class User < Grape::API
       namespace :user do
         desc 'update profile'
