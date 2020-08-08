@@ -2,17 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/loginFragment">
-
-    <action
-        android:id="@+id/action_login_fragment"
-        app:destination="@+id/loginFragment" />
-
-    <action
-        android:id="@+id/action_notes_fragment"
-        app:popUpToInclusive="true"
-        app:popUpTo="@id/nav_graph"
-        app:destination="@+id/notesFragment" />
+    app:startDestination="@id/loadingFragment">
 
     <fragment
         android:id="@+id/loginFragment"
@@ -44,11 +34,23 @@
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
     </fragment>
+
     <fragment
         android:id="@+id/notesFragment"
         android:name="com.amitbansal.notesapp.ui.fragments.NotesFragment"
-        android:label="NotesFragment" >
+        android:label="NotesFragment"></fragment>
 
-
+    <fragment
+        android:id="@+id/loadingFragment"
+        android:name="com.amitbansal.notesapp.ui.fragments.LoadingFragment"
+        android:label="LoadingFragment">
+        <action
+            android:id="@+id/action_loadingFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/nav_graph" />
+        <action
+            android:id="@+id/action_loadingFragment_to_notesFragment"
+            app:destination="@id/notesFragment"
+            app:popUpTo="@id/nav_graph" />
     </fragment>
 </navigation>
