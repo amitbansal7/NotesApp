@@ -22,7 +22,7 @@ class LoadingFragment : Fragment(R.layout.fragment_loading) {
 
         setObservers()
 
-        val user = Utils.getUserFromSharedPreferences(activity as Context)
+        val user = Utils.getUser()
         user?.let {
             authViewModel.authenticate(user)
         } ?: run {
@@ -40,7 +40,7 @@ class LoadingFragment : Fragment(R.layout.fragment_loading) {
                     findNavController().navigate(R.id.action_loadingFragment_to_notesFragment)
                 }
                 is Resource.Error -> {
-                    Utils.deleteUserFromSharedPreferences(activity as Context)
+                    Utils.deleteUserFromSharedPreferences()
                     findNavController().navigate(
                         R.id.action_loadingFragment_to_loginFragment
                     )

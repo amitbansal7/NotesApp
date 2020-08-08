@@ -12,7 +12,7 @@ module V1
       end
 
       def auth_token
-        params[:auth]
+        headers["Authentication"]
       end
     end
   end

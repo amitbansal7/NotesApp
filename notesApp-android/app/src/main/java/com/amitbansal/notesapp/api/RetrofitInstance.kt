@@ -1,6 +1,8 @@
 package com.amitbansal.notesapp.api
 
 import com.amitbansal.notesapp.util.Constants.BASE_URL
+import com.amitbansal.notesapp.util.Constants.SECRET_KEY
+import com.amitbansal.notesapp.util.Constants.SECRET_VALUE
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -12,9 +14,14 @@ class RetrofitInstance {
             val logging = HttpLoggingInterceptor()
             logging.setLevel(HttpLoggingInterceptor.Level.BODY)
 
-            val client = OkHttpClient.Builder()
+            var client = OkHttpClient.Builder()
                 .addInterceptor(logging)
-                .build()
+                .addInterceptor { chain ->
+                    val req =
+                        chain.request().newBuilder().addHeader(SECRET_KEY, SECRET_VALUE).build()
+                    chain.proceed(req)
+                }.build()
+
 
             Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -25,6 +32,10 @@ class RetrofitInstance {
 
         val authApi by lazy {
             retrofit.create(AuthApi::class.java)
+        }
+
+        val notesApi by lazy {
+            retrofit.create(NotesApi::class.java)
         }
     }
 }

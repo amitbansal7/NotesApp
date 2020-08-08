@@ -1,4 +1,4 @@
-package com.amitbansal.notesapp.models.responses
+package com.amitbansal.notesapp.models
 
 data class User(
     val auth_token: String,

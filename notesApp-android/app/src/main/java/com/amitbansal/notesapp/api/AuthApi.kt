@@ -1,17 +1,13 @@
 package com.amitbansal.notesapp.api
 
-import com.amitbansal.notesapp.models.responses.AuthResponse
-import com.amitbansal.notesapp.util.Constants.SECRET_KEY
-import com.amitbansal.notesapp.util.Constants.SECRET_VALUE
+import com.amitbansal.notesapp.models.AuthResponse
 import retrofit2.Response
 import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface AuthApi {
 
-    @Headers("$SECRET_KEY: $SECRET_VALUE")
     @GET("o/user/signin")
     suspend fun signin(
         @Query("username_or_email")
@@ -22,7 +18,6 @@ interface AuthApi {
 
     ): Response<AuthResponse>
 
-    @Headers("$SECRET_KEY: $SECRET_VALUE")
     @POST("o/user/signup")
     suspend fun signup(
         @Query("email")
@@ -39,7 +34,6 @@ interface AuthApi {
 
     ): Response<AuthResponse>
 
-    @Headers("$SECRET_KEY: $SECRET_VALUE")
     @GET("o/user/auth")
     suspend fun authenticate(
         @Query("auth_token")

@@ -52,7 +52,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 is Resource.Success -> {
                     Toast.makeText(activity, it.data!!.message, Toast.LENGTH_SHORT).show()
                     spinner.visibility = View.INVISIBLE
-                    Utils.setUserInSharedPreferences(activity as Context, it.data.user!!)
+                    Utils.setUserInSharedPreferences(it.data.user!!)
                     findNavController().navigate(R.id.action_loginFragment_to_notesFragment)
                 }
                 is Resource.Error -> {

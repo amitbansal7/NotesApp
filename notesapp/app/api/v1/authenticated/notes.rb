@@ -29,7 +29,7 @@ module V1
           requires :title, type: String, allow_blank: false
           optional :text, type: String, allow_blank: false
         end
-        post 'create' do
+        post '' do
           note = current_user.notes.create(permitted_params)
           if note.save
             render_success(message: 'Note created', data: serialized_data(note))

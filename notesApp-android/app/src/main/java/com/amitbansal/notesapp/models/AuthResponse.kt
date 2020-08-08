@@ -1,4 +1,4 @@
-package com.amitbansal.notesapp.models.responses
+package com.amitbansal.notesapp.models
 
 import com.google.gson.annotations.SerializedName
 

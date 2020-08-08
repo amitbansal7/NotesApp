@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amitbansal.notesapp.api.RetrofitInstance
-import com.amitbansal.notesapp.models.responses.AuthResponse
-import com.amitbansal.notesapp.models.responses.User
+import com.amitbansal.notesapp.models.AuthResponse
+import com.amitbansal.notesapp.models.User
 import com.amitbansal.notesapp.util.Resource
 import com.google.gson.Gson
 import kotlinx.coroutines.launch

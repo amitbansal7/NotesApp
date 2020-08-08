@@ -56,7 +56,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     Toast.makeText(activity, it.data!!.message, Toast.LENGTH_SHORT).show()
                     spinner.visibility = View.INVISIBLE
                     btnSignup.isClickable = true
-                    Utils.setUserInSharedPreferences(activity as Context, it.data.user!!)
+                    Utils.setUserInSharedPreferences(it.data.user!!)
                     findNavController().navigate(R.id.action_signUpFragment_to_notesFragment)
                 }
                 is Resource.Error -> {
