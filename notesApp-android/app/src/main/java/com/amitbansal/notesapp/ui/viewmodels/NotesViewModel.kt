@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.amitbansal.notesapp.api.RetrofitInstance
 import com.amitbansal.notesapp.models.Note
 import com.amitbansal.notesapp.models.NotesResponse
 import com.amitbansal.notesapp.repositories.NotesRepository
@@ -20,20 +19,39 @@ class NotesViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     val notesResponse: MutableLiveData<Resource<NotesResponse>> = MutableLiveData()
+    val swipeRefreshStatus: MutableLiveData<Boolean> = MutableLiveData()
 
     var notes: LiveData<List<Note>> = notesRepository.getAllDbNotes()
+    var notesPage = 1
 
-    fun getNotes() = viewModelScope.launch(Dispatchers.IO) {
-        notesResponse.postValue(Resource.Loading())
-        notesResponse.postValue(handleNotesResponse(RetrofitInstance.notesApi.getAll()))
+    init {
+        getNotes(true)
     }
 
-    private suspend fun handleNotesResponse(response: Response<NotesResponse>): Resource<NotesResponse> {
-        return if (response.isSuccessful) {
-            notesRepository.deleteAll()
-            notesRepository.addAll(response.body()!!.notes)
-            Resource.Success(response.body()!!)
+    fun refreshNotes() = viewModelScope.launch(Dispatchers.IO) {
+        swipeRefreshStatus.postValue(false)
+        val notesFromApi = handleNotesResponse(notesRepository.getNotesFromApi(1))
+        notesPage = 1
+        notesRepository.deleteAll()
+        notesResponse.postValue(notesFromApi)
+        notesFromApi.data?.notes?.let { notesRepository.addAll(it) }
+        swipeRefreshStatus.postValue(true)
+    }
 
+    fun getNotes(firstCall: Boolean = false) = viewModelScope.launch(Dispatchers.IO) {
+        notesResponse.postValue(Resource.Loading())
+        val notesFromApi = handleNotesResponse(notesRepository.getNotesFromApi(notesPage++))
+        if (firstCall) {
+            notesPage = 1
+            notesRepository.deleteAll()
+        }
+        notesFromApi.data?.notes?.let { notesRepository.addAll(it) }
+        notesResponse.postValue(notesFromApi)
+    }
+
+    private fun handleNotesResponse(response: Response<NotesResponse>): Resource<NotesResponse> {
+        return if (response.isSuccessful) {
+            Resource.Success(response.body()!!)
         } else {
             val notesResponse =
                 Gson().fromJson(response.errorBody()!!.charStream(), NotesResponse::class.java)

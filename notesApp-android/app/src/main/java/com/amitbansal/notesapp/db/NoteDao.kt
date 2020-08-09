@@ -17,6 +17,6 @@ interface NoteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(note: Note)
 
-    @Query("delete from notes where sync = :sync")
-    suspend fun deleteAll(sync: Boolean = true)
+    @Query("delete from notes")
+    suspend fun deleteAll()
 }

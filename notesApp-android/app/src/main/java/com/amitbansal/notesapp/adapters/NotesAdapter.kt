@@ -41,6 +41,7 @@ class NotesAdapter() : RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
 
         holder.itemView.apply {
             tvNoteTitle.text = currentNote.title
+            tvNoteText.text = currentNote.text
         }
     }
 }

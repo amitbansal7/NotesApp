@@ -10,7 +10,7 @@ class NotesRepository @Inject constructor(
 ) {
     fun getAllDbNotes() = noteDao.getAllNotes()
 
-    suspend fun getNotesFromApi() = RetrofitInstance.notesApi.getAll()
+    suspend fun getNotesFromApi(page: Int) = RetrofitInstance.notesApi.getAll(page)
 
     suspend fun addAll(notes: List<Note>) = noteDao.insertAll(notes)
 
