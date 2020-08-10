@@ -3,6 +3,7 @@ package com.amitbansal.notesapp.models
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(tableName = "notes")
 data class Note(
@@ -16,6 +17,5 @@ data class Note(
     val username: String?,
 
     //Local
-    @ColumnInfo(name = "sync", defaultValue = "1")
-    val sync: Int = 1
-)
+    val sync: Boolean = false
+): Serializable

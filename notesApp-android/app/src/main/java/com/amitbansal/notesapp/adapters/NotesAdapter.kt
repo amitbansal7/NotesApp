@@ -36,12 +36,28 @@ class NotesAdapter() : RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
         return differ.currentList.size
     }
 
+    private var onNotesClickListener: ((Note) -> Unit)? = null
+
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         val currentNote = differ.currentList[position]
 
         holder.itemView.apply {
             tvNoteTitle.text = currentNote.title
             tvNoteText.text = currentNote.text
+            if (currentNote.sync) {
+                ivTick.setImageResource(R.drawable.ic_baseline_check_24)
+            } else {
+                ivTick.setImageResource(R.drawable.ic_baseline_close_24)
+            }
+            setOnClickListener {
+                onNotesClickListener?.let { listener ->
+                    listener(currentNote)
+                }
+            }
         }
+    }
+
+    fun setOnNotesClickListener(listener: (Note) -> Unit) {
+        onNotesClickListener = listener
     }
 }

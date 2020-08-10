@@ -51,7 +51,10 @@ class NotesViewModel @ViewModelInject constructor(
 
     private fun handleNotesResponse(response: Response<NotesResponse>): Resource<NotesResponse> {
         return if (response.isSuccessful) {
-            Resource.Success(response.body()!!)
+            val notesResponse = response.body()!!
+            //All notes from api are by default synced.
+            notesResponse.notes = notesResponse.notes.map { it.copy(sync = true) }.toMutableList()
+            Resource.Success(notesResponse)
         } else {
             val notesResponse =
                 Gson().fromJson(response.errorBody()!!.charStream(), NotesResponse::class.java)

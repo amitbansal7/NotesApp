@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.amitbansal.notesapp.R
@@ -26,14 +27,13 @@ class NotesFragment : Fragment(R.layout.fragment_notes) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupRecylerView()
+        setupRecyclerView()
         setupSwipeToRefresh()
         setupObservers()
 
         notesViewModel.notes.observe(viewLifecycleOwner, Observer {
             notesAdapter.differ.submitList(it)
         })
-
     }
 
     private fun setupObservers() {
@@ -54,8 +54,16 @@ class NotesFragment : Fragment(R.layout.fragment_notes) {
         })
     }
 
-    private fun setupRecylerView() {
+    private fun setupRecyclerView() {
         notesAdapter = NotesAdapter()
+
+        notesAdapter.setOnNotesClickListener {
+            val args = Bundle().apply {
+                putSerializable("note", it)
+            }
+
+            findNavController().navigate(R.id.action_notesFragment_to_noteDetailFragment, args)
+        }
 
         var loading = true
         var pastVisiblesItems: Int

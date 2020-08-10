@@ -6,4 +6,5 @@ object Constants {
     const val SECRET_VALUE = "somekey"
     const val AUTH_KEY = "Authentication"
     const val RB_NAME = "notes_db"
+    const val NOTE_ID = "NOTE_ID"
 }

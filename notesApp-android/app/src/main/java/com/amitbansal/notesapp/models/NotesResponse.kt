@@ -5,6 +5,6 @@ import com.google.gson.annotations.SerializedName
 
 data class NotesResponse(
     @SerializedName("data")
-    val notes: MutableList<Note>,
+    var notes: MutableList<Note>,
     val message: String
 )
