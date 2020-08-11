@@ -2,8 +2,9 @@ package com.amitbansal.notesapp.di
 
 import android.content.Context
 import androidx.room.Room
+import com.amitbansal.notesapp.App
 import com.amitbansal.notesapp.db.AppDb
-import com.amitbansal.notesapp.util.Constants.RB_NAME
+import com.amitbansal.notesapp.util.Constants.DB_NAME
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +21,7 @@ object AppModule {
         Room.databaseBuilder(
             app,
             AppDb::class.java,
-            RB_NAME
+            DB_NAME
         ).build()
 
     @Singleton

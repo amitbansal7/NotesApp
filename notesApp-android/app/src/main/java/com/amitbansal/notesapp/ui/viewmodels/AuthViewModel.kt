@@ -1,13 +1,16 @@
 package com.amitbansal.notesapp.ui.viewmodels
 
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amitbansal.notesapp.App
 import com.amitbansal.notesapp.api.RetrofitInstance
 import com.amitbansal.notesapp.models.AuthResponse
 import com.amitbansal.notesapp.models.User
 import com.amitbansal.notesapp.util.Resource
+import com.amitbansal.notesapp.util.Utils
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import retrofit2.Response

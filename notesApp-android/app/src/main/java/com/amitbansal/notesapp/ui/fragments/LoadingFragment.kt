@@ -1,8 +1,8 @@
 package com.amitbansal.notesapp.ui.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
@@ -24,7 +24,14 @@ class LoadingFragment : Fragment(R.layout.fragment_loading) {
 
         val user = Utils.getUser()
         user?.let {
-            authViewModel.authenticate(user)
+            if (Utils.hasInternetConnection()) {
+                authViewModel.authenticate(user)
+            } else {
+                Toast.makeText(activity, "No Internet Connection", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(
+                    R.id.action_loadingFragment_to_notesFragment
+                )
+            }
         } ?: run {
             findNavController().navigate(
                 R.id.action_loadingFragment_to_loginFragment

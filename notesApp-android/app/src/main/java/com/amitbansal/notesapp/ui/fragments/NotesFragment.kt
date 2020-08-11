@@ -106,7 +106,15 @@ class NotesFragment : Fragment(R.layout.fragment_notes) {
         )
 
         notesViewModel.swipeRefreshStatus.observe(viewLifecycleOwner, Observer {
-            if (it) swipeContainer.isRefreshing = false
+            when (it) {
+                is Resource.Success -> {
+                    swipeContainer.isRefreshing = false
+                }
+                is Resource.Error -> {
+                    swipeContainer.isRefreshing = false
+                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                }
+            }
         })
     }
 }

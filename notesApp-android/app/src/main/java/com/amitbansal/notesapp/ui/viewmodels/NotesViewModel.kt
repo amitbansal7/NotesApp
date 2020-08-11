@@ -9,6 +9,7 @@ import com.amitbansal.notesapp.models.Note
 import com.amitbansal.notesapp.models.NotesResponse
 import com.amitbansal.notesapp.repositories.NotesRepository
 import com.amitbansal.notesapp.util.Resource
+import com.amitbansal.notesapp.util.Utils
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,7 +20,7 @@ class NotesViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     val notesResponse: MutableLiveData<Resource<NotesResponse>> = MutableLiveData()
-    val swipeRefreshStatus: MutableLiveData<Boolean> = MutableLiveData()
+    val swipeRefreshStatus: MutableLiveData<Resource<Boolean>> = MutableLiveData()
 
     var notes: LiveData<List<Note>> = notesRepository.getAllDbNotes()
     var notesPage = 1
@@ -29,25 +30,34 @@ class NotesViewModel @ViewModelInject constructor(
     }
 
     fun refreshNotes() = viewModelScope.launch(Dispatchers.IO) {
-        swipeRefreshStatus.postValue(false)
-        val notesFromApi = handleNotesResponse(notesRepository.getNotesFromApi(1))
-        notesPage = 1
-        notesRepository.deleteAll()
-        notesResponse.postValue(notesFromApi)
-        notesFromApi.data?.notes?.let { notesRepository.addAll(it) }
-        swipeRefreshStatus.postValue(true)
+        if (Utils.hasInternetConnection()) {
+            swipeRefreshStatus.postValue(Resource.Success(false))
+            val notesFromApi = handleNotesResponse(notesRepository.getNotesFromApi(1))
+            notesPage = 1
+            notesRepository.deleteAll()
+            notesResponse.postValue(notesFromApi)
+            notesFromApi.data?.notes?.let { notesRepository.addAll(it) }
+            swipeRefreshStatus.postValue(Resource.Success(true))
+        } else {
+            swipeRefreshStatus.postValue(Resource.Error(true, "No Internet Connection"))
+        }
     }
 
     fun getNotes(firstCall: Boolean = false) = viewModelScope.launch(Dispatchers.IO) {
-        notesResponse.postValue(Resource.Loading())
-        val notesFromApi = handleNotesResponse(notesRepository.getNotesFromApi(notesPage++))
-        if (firstCall) {
-            notesPage = 1
-            notesRepository.deleteAll()
+        if (Utils.hasInternetConnection()) {
+            notesResponse.postValue(Resource.Loading())
+            val notesFromApi = handleNotesResponse(notesRepository.getNotesFromApi(notesPage++))
+            if (firstCall) {
+                notesPage = 1
+                notesRepository.deleteAll()
+            }
+            notesFromApi.data?.notes?.let { notesRepository.addAll(it) }
+            notesResponse.postValue(notesFromApi)
+        } else {
+            notesResponse.postValue(Resource.Error(data = null, message = "No Internet Connection"))
         }
-        notesFromApi.data?.notes?.let { notesRepository.addAll(it) }
-        notesResponse.postValue(notesFromApi)
     }
+
 
     private fun handleNotesResponse(response: Response<NotesResponse>): Resource<NotesResponse> {
         return if (response.isSuccessful) {
@@ -62,5 +72,4 @@ class NotesViewModel @ViewModelInject constructor(
             Resource.Error(null, notesResponse.message)
         }
     }
-
 }
