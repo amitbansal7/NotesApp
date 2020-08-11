@@ -2,8 +2,8 @@ package com.amitbansal.notesapp.models
 
 import com.google.gson.annotations.SerializedName
 
-data class NotesResponse(
+data class NoteResponse (
     @SerializedName("data")
-    var notes: MutableList<Note>,
+    var note: Note,
     val message: String
 )

@@ -16,7 +16,8 @@ module V1
           @notes = current_user.notes
           apply_filters
 
-          data = @notes.offset(params[:per_page] * (params[:page] - 1))
+          data = @notes.order(updated_at: :desc)
+                       .offset(params[:per_page] * (params[:page] - 1))
                        .limit(params[:per_page])
                        .includes(:user).map do |note|
             serialized_data(note)
@@ -81,7 +82,6 @@ module V1
             render_error(message: note.errors.full_messages.join(', '))
           end
         end
-
       end
     end
   end

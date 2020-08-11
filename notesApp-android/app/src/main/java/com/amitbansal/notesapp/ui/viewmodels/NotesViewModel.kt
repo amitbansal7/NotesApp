@@ -5,7 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amitbansal.notesapp.api.RetrofitInstance
 import com.amitbansal.notesapp.models.Note
+import com.amitbansal.notesapp.models.NoteResponse
 import com.amitbansal.notesapp.models.NotesResponse
 import com.amitbansal.notesapp.repositories.NotesRepository
 import com.amitbansal.notesapp.util.Resource
@@ -21,6 +23,8 @@ class NotesViewModel @ViewModelInject constructor(
 
     val notesResponse: MutableLiveData<Resource<NotesResponse>> = MutableLiveData()
     val swipeRefreshStatus: MutableLiveData<Resource<Boolean>> = MutableLiveData()
+    val updateNoteResponse: MutableLiveData<Resource<NoteResponse>> = MutableLiveData()
+    val makePublicNoteResponse: MutableLiveData<Resource<NoteResponse>> = MutableLiveData()
 
     var notes: LiveData<List<Note>> = notesRepository.getAllDbNotes()
     var notesPage = 1
@@ -58,6 +62,60 @@ class NotesViewModel @ViewModelInject constructor(
         }
     }
 
+    fun updateNote(note: Note) = viewModelScope.launch(Dispatchers.IO) {
+        updateNoteHelper({
+            RetrofitInstance.notesApi.updateNote(
+                note.id,
+                note.title,
+                note?.text ?: ""
+            )
+        }, updateNoteResponse)
+
+    }
+
+    fun makeNotePublic(note: Note) = viewModelScope.launch(Dispatchers.IO) {
+        updateNoteHelper({ notesRepository.makePublic(note) }, makePublicNoteResponse)
+    }
+
+    fun makeNotePrivate(note: Note) = viewModelScope.launch(Dispatchers.IO) {
+        updateNoteHelper({ notesRepository.makePrivate(note) }, updateNoteResponse)
+    }
+
+    private suspend fun updateNoteHelper(
+        call: suspend () -> Response<NoteResponse>,
+        responseObj: MutableLiveData<Resource<NoteResponse>>
+    ) =
+        viewModelScope.launch(Dispatchers.IO) {
+            if (Utils.hasInternetConnection()) {
+                responseObj.postValue(Resource.Loading())
+                val response = handleNoteResponse(
+                    call()
+                )
+                response.data?.note?.let {
+                    notesRepository.add(it)
+                }
+                responseObj.postValue(response)
+
+            } else {
+                responseObj.postValue(
+                    Resource.Error(null, "No Internet connection")
+                )
+            }
+        }
+
+    private fun handleNoteResponse(response: Response<NoteResponse>): Resource<NoteResponse> {
+        return if (response.isSuccessful) {
+            val noteResponse = response.body()!!
+            //All notes from api are by default synced.
+            noteResponse.note = noteResponse.note.copy(sync = true)
+            Resource.Success(noteResponse)
+        } else {
+            val notesResponse =
+                Gson().fromJson(response.errorBody()!!.charStream(), NotesResponse::class.java)
+
+            Resource.Error(null, notesResponse.message)
+        }
+    }
 
     private fun handleNotesResponse(response: Response<NotesResponse>): Resource<NotesResponse> {
         return if (response.isSuccessful) {

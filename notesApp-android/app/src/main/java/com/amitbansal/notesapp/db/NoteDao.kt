@@ -10,7 +10,7 @@ import com.amitbansal.notesapp.models.Note
 @Dao
 interface NoteDao {
 
-    @Query("select * from notes")
+    @Query("select * from notes order by updated_at desc")
     fun getAllNotes(): LiveData<List<Note>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
