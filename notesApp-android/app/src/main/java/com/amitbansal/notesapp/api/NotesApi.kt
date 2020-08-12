@@ -25,7 +25,7 @@ interface NotesApi {
         title: String,
 
         @Query("text")
-        text: String,
+        text: String?,
 
         @Header("Authentication") auth: String? = Utils.getUser()?.auth_token
     ): Response<NoteResponse>
@@ -42,6 +42,17 @@ interface NotesApi {
     suspend fun makePrivate(
         @Path("id")
         id: Int,
+
+        @Header("Authentication") auth: String? = Utils.getUser()?.auth_token
+    ): Response<NoteResponse>
+
+    @POST("notes")
+    suspend fun createNote(
+        @Query("title")
+        title: String,
+
+        @Query("text")
+        text: String?,
 
         @Header("Authentication") auth: String? = Utils.getUser()?.auth_token
     ): Response<NoteResponse>

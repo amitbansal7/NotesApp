@@ -34,6 +34,10 @@ class NotesFragment : Fragment(R.layout.fragment_notes) {
         notesViewModel.notes.observe(viewLifecycleOwner, Observer {
             notesAdapter.differ.submitList(it)
         })
+
+        fab.setOnClickListener{
+            findNavController().navigate(R.id.action_notesFragment_to_noteAddFragment)
+        }
     }
 
     private fun setupObservers() {

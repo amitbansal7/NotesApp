@@ -32,7 +32,7 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note_detail) {
 
         setObservers()
 
-        btnUpdate.setOnClickListener {
+        btnCreate.setOnClickListener {
             updateNote()
         }
 

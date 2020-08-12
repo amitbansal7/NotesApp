@@ -43,6 +43,9 @@
         <action
             android:id="@+id/action_notesFragment_to_noteDetailFragment"
             app:destination="@id/noteDetailFragment" />
+        <action
+            android:id="@+id/action_notesFragment_to_noteAddFragment"
+            app:destination="@id/noteAddFragment" />
     </fragment>
 
     <fragment
@@ -68,4 +71,9 @@
             android:name="note"
             app:argType="com.amitbansal.notesapp.models.Note" />
     </fragment>
+    <fragment
+        android:id="@+id/noteAddFragment"
+        android:name="com.amitbansal.notesapp.ui.fragments.NoteAddFragment"
+        android:label="fragment_note_add"
+        tools:layout="@layout/fragment_note_add" />
 </navigation>

@@ -20,5 +20,11 @@ class NotesRepository @Inject constructor(
 
     suspend fun makePrivate(note: Note) = RetrofitInstance.notesApi.makePrivate(note.id)
 
+    suspend fun createNote(title: String, text: String) =
+        RetrofitInstance.notesApi.createNote(title, text)
+
+    suspend fun updateNote(note: Note) =
+        RetrofitInstance.notesApi.updateNote(note.id, note.title, note?.text)
+
     suspend fun deleteAll() = noteDao.deleteAll()
 }

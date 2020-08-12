@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.amitbansal.notesapp.api.RetrofitInstance
 import com.amitbansal.notesapp.models.Note
 import com.amitbansal.notesapp.models.NoteResponse
 import com.amitbansal.notesapp.models.NotesResponse
@@ -25,6 +24,7 @@ class NotesViewModel @ViewModelInject constructor(
     val swipeRefreshStatus: MutableLiveData<Resource<Boolean>> = MutableLiveData()
     val updateNoteResponse: MutableLiveData<Resource<NoteResponse>> = MutableLiveData()
     val makePublicNoteResponse: MutableLiveData<Resource<NoteResponse>> = MutableLiveData()
+    val createNoteResponse: MutableLiveData<Resource<NoteResponse>> = MutableLiveData()
 
     var notes: LiveData<List<Note>> = notesRepository.getAllDbNotes()
     var notesPage = 1
@@ -63,27 +63,58 @@ class NotesViewModel @ViewModelInject constructor(
     }
 
     fun updateNote(note: Note) = viewModelScope.launch(Dispatchers.IO) {
-        updateNoteHelper({
-            RetrofitInstance.notesApi.updateNote(
-                note.id,
-                note.title,
-                note?.text ?: ""
-            )
-        }, updateNoteResponse)
+        updateNoteHelper(
+            { notesRepository.updateNote(note) },
+            updateNoteResponse,
+            {
+                val savedNote = note.copy(sync = false)
+                notesRepository.add(savedNote)
+                makePublicNoteResponse.postValue(
+                    Resource.Success(NoteResponse(savedNote, "Update Note locally"))
+                )
+            }
+        )
 
+    }
+
+    fun createNote(title: String, text: String) = viewModelScope.launch(Dispatchers.IO) {
+        updateNoteHelper(
+            { notesRepository.createNote(title, text) },
+            createNoteResponse,
+            {
+//                val savedNote = note.copy(sync = false)
+//                notesRepository.add(savedNote)
+//                makePublicNoteResponse.postValue(
+//                    Resource.Success(NoteResponse(savedNote, "Note Created locally"))
+//                )
+            }
+        )
     }
 
     fun makeNotePublic(note: Note) = viewModelScope.launch(Dispatchers.IO) {
-        updateNoteHelper({ notesRepository.makePublic(note) }, makePublicNoteResponse)
+        updateNoteHelper(
+            { notesRepository.makePublic(note) },
+            makePublicNoteResponse,
+            {
+                updateNoteResponse.postValue(Resource.Error(null, "No Internet Connection"))
+            }
+        )
     }
 
     fun makeNotePrivate(note: Note) = viewModelScope.launch(Dispatchers.IO) {
-        updateNoteHelper({ notesRepository.makePrivate(note) }, updateNoteResponse)
+        updateNoteHelper(
+            { notesRepository.makePrivate(note) },
+            updateNoteResponse,
+            {
+                updateNoteResponse.postValue(Resource.Error(null, "No Internet Connection"))
+            }
+        )
     }
 
     private suspend fun updateNoteHelper(
         call: suspend () -> Response<NoteResponse>,
-        responseObj: MutableLiveData<Resource<NoteResponse>>
+        responseObj: MutableLiveData<Resource<NoteResponse>>,
+        noInternetConnectionCall: suspend () -> Unit
     ) =
         viewModelScope.launch(Dispatchers.IO) {
             if (Utils.hasInternetConnection()) {
@@ -97,9 +128,7 @@ class NotesViewModel @ViewModelInject constructor(
                 responseObj.postValue(response)
 
             } else {
-                responseObj.postValue(
-                    Resource.Error(null, "No Internet connection")
-                )
+                noInternetConnectionCall()
             }
         }
 
