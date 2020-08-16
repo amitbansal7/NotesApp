@@ -16,15 +16,15 @@ class NotesRepository @Inject constructor(
 
     suspend fun add(note: Note) = noteDao.insert(note)
 
-    suspend fun makePublic(note: Note) = RetrofitInstance.notesApi.makePublic(note.id)
+    suspend fun makePublic(sid: Int) = RetrofitInstance.notesApi.makePublic(sid)
 
-    suspend fun makePrivate(note: Note) = RetrofitInstance.notesApi.makePrivate(note.id)
+    suspend fun makePrivate(sid: Int) = RetrofitInstance.notesApi.makePrivate(sid)
 
     suspend fun createNote(title: String, text: String) =
         RetrofitInstance.notesApi.createNote(title, text)
 
-    suspend fun updateNote(note: Note) =
-        RetrofitInstance.notesApi.updateNote(note.id, note.title, note?.text)
+    suspend fun updateNote(sid: Int, title: String, text: String?) =
+        RetrofitInstance.notesApi.updateNote(sid, title, text)
 
     suspend fun deleteAll() = noteDao.deleteAll()
 }

@@ -32,7 +32,7 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note_detail) {
 
         setObservers()
 
-        btnCreate.setOnClickListener {
+        btnUpdate.setOnClickListener {
             updateNote()
         }
 
@@ -40,12 +40,12 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note_detail) {
             shareNote()
         }
 
-        btnMakePrivate.setOnClickListener{
+        btnMakePrivate.setOnClickListener {
             makePrivate()
         }
     }
 
-    private fun makePrivate(){
+    private fun makePrivate() {
         notesViewModel.makeNotePrivate(note)
     }
 
@@ -55,7 +55,7 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note_detail) {
         } else {
             notesViewModel.makePublicNoteResponse.postValue(
                 Resource.Success(
-                    NoteResponse(note, "")
+                    NoteResponse(note, "Share note url.")
                 )
             )
         }
@@ -77,7 +77,8 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note_detail) {
                     spinner.visibility = View.INVISIBLE
                 }
                 is Resource.Error -> {
-                    Toast.makeText(activity, it.data?.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, it.data?.message ?: it.message, Toast.LENGTH_SHORT)
+                        .show()
                     spinner.visibility = View.INVISIBLE
                 }
                 is Resource.Loading -> {
@@ -101,7 +102,8 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note_detail) {
                     spinner.visibility = View.INVISIBLE
                 }
                 is Resource.Error -> {
-                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, it.message ?: it.data?.message, Toast.LENGTH_SHORT)
+                        .show()
                     spinner.visibility = View.INVISIBLE
                 }
                 is Resource.Loading -> {

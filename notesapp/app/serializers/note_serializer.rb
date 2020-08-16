@@ -1,6 +1,10 @@
 class NoteSerializer
   include FastJsonapi::ObjectSerializer
-  attributes :id, :title, :text, :public_url
+  attributes :title, :text, :public_url
+
+  attribute :note_id do |note|
+    note.id
+  end
 
   attribute :username do |note|
     note.user.username

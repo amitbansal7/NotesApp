@@ -52,7 +52,7 @@
         app:boxCornerRadiusTopEnd="5dp"
         app:boxCornerRadiusTopStart="5dp"
         app:boxStrokeColor="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@+id/btnCreate"
+        app:layout_constraintBottom_toTopOf="@+id/btnUpdate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tilNoteTitle">
@@ -82,7 +82,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnCreate"
+        android:id="@+id/btnUpdate"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:text="Update"
@@ -101,7 +101,7 @@
         app:layout_constraintEnd_toStartOf="@+id/btnMakePrivate"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_weight="2"
-        app:layout_constraintStart_toEndOf="@+id/btnCreate"
+        app:layout_constraintStart_toEndOf="@+id/btnUpdate"
         app:layout_constraintTop_toBottomOf="@+id/tilNoteText" />
 
     <Button

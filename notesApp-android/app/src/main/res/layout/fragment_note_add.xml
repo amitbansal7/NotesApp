@@ -25,7 +25,8 @@
         app:layout_constraintHorizontal_weight="8"
         app:layout_constraintRight_toLeftOf="@+id/tvSynced"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_weight="5">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/tvNoteTitle"
@@ -53,7 +54,8 @@
         app:layout_constraintBottom_toTopOf="@+id/btnCreate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilNoteTitle">
+        app:layout_constraintTop_toBottomOf="@+id/tilNoteTitle"
+        app:layout_constraintVertical_weight="10">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/tvNoteText"
@@ -86,9 +88,9 @@
         android:text="Create"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilNoteText" />
+        app:layout_constraintTop_toBottomOf="@+id/tilNoteText"
+        app:layout_constraintVertical_weight="2" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

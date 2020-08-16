@@ -63,74 +63,88 @@ class NotesViewModel @ViewModelInject constructor(
     }
 
     fun updateNote(note: Note) = viewModelScope.launch(Dispatchers.IO) {
-        updateNoteHelper(
-            { notesRepository.updateNote(note) },
-            updateNoteResponse,
-            {
-                val savedNote = note.copy(sync = false)
-                notesRepository.add(savedNote)
-                makePublicNoteResponse.postValue(
-                    Resource.Success(NoteResponse(savedNote, "Update Note locally"))
-                )
-            }
-        )
+        if (Utils.hasInternetConnection()) {
+            updateNoteResponse.postValue(Resource.Loading())
+            note.note_id?.let {
+                val response =
+                    handleNoteResponse(notesRepository.updateNote(it, note.title, note.text))
 
+                response.data?.note?.let { note ->
+                    notesRepository.add(note)
+                }
+                updateNoteResponse.postValue(response)
+            } ?: updateNoteLocally(note)
+
+        } else {
+            updateNoteLocally(note)
+        }
+    }
+
+
+    private suspend fun updateNoteLocally(note: Note) {
+        val savedNote = note.copy(sync = false)
+        notesRepository.add(savedNote)
+        updateNoteResponse.postValue(
+            Resource.Success(NoteResponse(savedNote, "Note Updated locally"))
+        )
     }
 
     fun createNote(title: String, text: String) = viewModelScope.launch(Dispatchers.IO) {
-        updateNoteHelper(
-            { notesRepository.createNote(title, text) },
-            createNoteResponse,
-            {
-//                val savedNote = note.copy(sync = false)
-//                notesRepository.add(savedNote)
-//                makePublicNoteResponse.postValue(
-//                    Resource.Success(NoteResponse(savedNote, "Note Created locally"))
-//                )
+        if (Utils.hasInternetConnection()) {
+            createNoteResponse.postValue(Resource.Loading())
+            val response = handleNoteResponse(
+                notesRepository.createNote(title, text)
+            )
+
+            response.data?.note?.let {
+                notesRepository.add(it)
             }
-        )
+            createNoteResponse.postValue(response)
+
+        } else {
+            val savedNote = Note(title, text, false)
+            notesRepository.add(savedNote)
+            createNoteResponse.postValue(
+                Resource.Success(NoteResponse(savedNote, "Note Created locally"))
+            )
+        }
     }
 
-    fun makeNotePublic(note: Note) = viewModelScope.launch(Dispatchers.IO) {
-        updateNoteHelper(
-            { notesRepository.makePublic(note) },
-            makePublicNoteResponse,
-            {
-                updateNoteResponse.postValue(Resource.Error(null, "No Internet Connection"))
-            }
-        )
+
+    fun makeNotePublic(note: Note) = viewModelScope.launch {
+        publicPrivateNoteHelper(makePublicNoteResponse, note, true)
     }
 
-    fun makeNotePrivate(note: Note) = viewModelScope.launch(Dispatchers.IO) {
-        updateNoteHelper(
-            { notesRepository.makePrivate(note) },
-            updateNoteResponse,
-            {
-                updateNoteResponse.postValue(Resource.Error(null, "No Internet Connection"))
-            }
-        )
+    fun makeNotePrivate(note: Note) = viewModelScope.launch {
+        publicPrivateNoteHelper(updateNoteResponse, note, false)
     }
 
-    private suspend fun updateNoteHelper(
-        call: suspend () -> Response<NoteResponse>,
+    private suspend fun publicPrivateNoteHelper(
         responseObj: MutableLiveData<Resource<NoteResponse>>,
-        noInternetConnectionCall: suspend () -> Unit
-    ) =
-        viewModelScope.launch(Dispatchers.IO) {
-            if (Utils.hasInternetConnection()) {
-                responseObj.postValue(Resource.Loading())
+        note: Note,
+        makePublic: Boolean
+    ) {
+        if (Utils.hasInternetConnection()) {
+            responseObj.postValue(Resource.Loading())
+
+            note.note_id?.let {
                 val response = handleNoteResponse(
-                    call()
+                    if (makePublic) notesRepository.makePublic(it)
+                    else notesRepository.makePrivate(it)
                 )
-                response.data?.note?.let {
-                    notesRepository.add(it)
+
+                response.data?.note?.let { note ->
+                    notesRepository.add(note)
                 }
                 responseObj.postValue(response)
+            } ?: responseObj.postValue(Resource.Error(null, "Note is not synced with server yet."))
 
-            } else {
-                noInternetConnectionCall()
-            }
+
+        } else {
+            responseObj.postValue(Resource.Error(null, "No Internet Connection"))
         }
+    }
+
 
     private fun handleNoteResponse(response: Response<NoteResponse>): Resource<NoteResponse> {
         return if (response.isSuccessful) {

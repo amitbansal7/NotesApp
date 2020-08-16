@@ -1,11 +1,9 @@
 package com.amitbansal.notesapp.ui.viewmodels
 
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.amitbansal.notesapp.App
 import com.amitbansal.notesapp.api.RetrofitInstance
 import com.amitbansal.notesapp.models.AuthResponse
 import com.amitbansal.notesapp.models.User
@@ -24,24 +22,32 @@ class AuthViewModel @ViewModelInject constructor() : ViewModel() {
 
     fun login(username: String, password: String) = viewModelScope.launch {
         loginResponse.postValue(Resource.Loading())
-        loginResponse.postValue(
-            handleAuthResponse(
-                RetrofitInstance.authApi.signin(
-                    username, password
+        if (Utils.hasInternetConnection()) {
+            loginResponse.postValue(
+                handleAuthResponse(
+                    RetrofitInstance.authApi.signin(
+                        username, password
+                    )
                 )
             )
-        )
+        } else {
+            loginResponse.postValue(Resource.Error(null, "No Internet Connection"))
+        }
     }
 
     fun signup(email: String, password: String) = viewModelScope.launch {
         signupResponse.postValue(Resource.Loading())
-        signupResponse.postValue(
-            handleAuthResponse(
-                RetrofitInstance.authApi.signup(
-                    email = email, password = password
+        if (Utils.hasInternetConnection()) {
+            signupResponse.postValue(
+                handleAuthResponse(
+                    RetrofitInstance.authApi.signup(
+                        email = email, password = password
+                    )
                 )
             )
-        )
+        } else {
+            loginResponse.postValue(Resource.Error(null, "No Internet Connection"))
+        }
     }
 
     fun authenticate(user: User) = viewModelScope.launch {

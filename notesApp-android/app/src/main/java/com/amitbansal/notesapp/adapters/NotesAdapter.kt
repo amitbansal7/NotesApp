@@ -15,7 +15,7 @@ class NotesAdapter() : RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
 
     private val differCallback = object : DiffUtil.ItemCallback<Note>() {
         override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean {
-            return oldItem.id == newItem.id
+            return oldItem.note_id == newItem.note_id
         }
 
         override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
