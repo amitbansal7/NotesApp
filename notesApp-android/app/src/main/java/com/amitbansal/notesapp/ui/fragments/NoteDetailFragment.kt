@@ -63,7 +63,9 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note_detail) {
     }
 
     private fun updateNote() {
+        val noteId = note.id
         note = note.copy(text = tvNoteText.text.toString(), title = tvNoteTitle.text.toString())
+        note.id = noteId
         notesViewModel.updateNote(note)
     }
 

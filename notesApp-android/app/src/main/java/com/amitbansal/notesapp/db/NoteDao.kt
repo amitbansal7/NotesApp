@@ -21,4 +21,10 @@ interface NoteDao {
 
     @Query("delete from notes where sync = :sync")
     suspend fun deleteAll(sync: Boolean = true)
+
+    @Query("select * from notes where sync = :sync")
+    suspend fun getAllSync(sync: Boolean): List<Note>
+
+    @Query("delete from notes where id = :id")
+    suspend fun deleteById(id: Int)
 }

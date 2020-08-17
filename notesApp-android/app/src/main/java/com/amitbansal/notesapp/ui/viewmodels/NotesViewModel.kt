@@ -5,19 +5,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.amitbansal.notesapp.models.Note
 import com.amitbansal.notesapp.models.NoteResponse
 import com.amitbansal.notesapp.models.NotesResponse
 import com.amitbansal.notesapp.repositories.NotesRepository
 import com.amitbansal.notesapp.util.Resource
 import com.amitbansal.notesapp.util.Utils
+import com.amitbansal.notesapp.workers.NoteSyncWorker
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
 class NotesViewModel @ViewModelInject constructor(
-    private val notesRepository: NotesRepository
+    private val notesRepository: NotesRepository,
+    private val workManager: WorkManager
 ) : ViewModel() {
 
     val notesResponse: MutableLiveData<Resource<NotesResponse>> = MutableLiveData()
@@ -26,11 +30,13 @@ class NotesViewModel @ViewModelInject constructor(
     val makePublicNoteResponse: MutableLiveData<Resource<NoteResponse>> = MutableLiveData()
     val createNoteResponse: MutableLiveData<Resource<NoteResponse>> = MutableLiveData()
 
+
     var notes: LiveData<List<Note>> = notesRepository.getAllDbNotes()
     var notesPage = 1
 
     init {
         getNotes(true)
+        workManager.enqueue(OneTimeWorkRequest.from(NoteSyncWorker::class.java))
     }
 
     fun refreshNotes() = viewModelScope.launch(Dispatchers.IO) {
@@ -40,7 +46,7 @@ class NotesViewModel @ViewModelInject constructor(
             notesPage = 1
             notesRepository.deleteAll()
             notesResponse.postValue(notesFromApi)
-            notesFromApi.data?.notes?.let { notesRepository.addAll(it) }
+            notesFromApi.data?.notes?.let { notesRepository.addAll(filterUnsyncedNotes(it)) }
             swipeRefreshStatus.postValue(Resource.Success(true))
         } else {
             swipeRefreshStatus.postValue(Resource.Error(true, "No Internet Connection"))
@@ -55,7 +61,9 @@ class NotesViewModel @ViewModelInject constructor(
                 notesPage = 1
                 notesRepository.deleteAll()
             }
-            notesFromApi.data?.notes?.let { notesRepository.addAll(it) }
+            notesFromApi.data?.notes?.let {
+                notesRepository.addAll(filterUnsyncedNotes(it))
+            }
             notesResponse.postValue(notesFromApi)
         } else {
             notesResponse.postValue(Resource.Error(data = null, message = "No Internet Connection"))
@@ -80,6 +88,10 @@ class NotesViewModel @ViewModelInject constructor(
         }
     }
 
+    private suspend fun filterUnsyncedNotes(notes: List<Note>): List<Note> {
+        val unSyncedIds = notesRepository.getAllNotSynced().map { note -> note.note_id }
+        return notes.filter { note -> !unSyncedIds.contains(note.note_id) }
+    }
 
     private suspend fun updateNoteLocally(note: Note) {
         val savedNote = note.copy(sync = false)

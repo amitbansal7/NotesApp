@@ -27,4 +27,8 @@ class NotesRepository @Inject constructor(
         RetrofitInstance.notesApi.updateNote(sid, title, text)
 
     suspend fun deleteAll() = noteDao.deleteAll()
+
+    suspend fun getAllNotSynced() = noteDao.getAllSync(false)
+
+    suspend fun deleteById(id: Int) = noteDao.deleteById(id)
 }
