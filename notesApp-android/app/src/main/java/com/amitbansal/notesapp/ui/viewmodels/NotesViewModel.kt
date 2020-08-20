@@ -20,8 +20,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 
 class NotesViewModel @ViewModelInject constructor(
-    private val notesRepository: NotesRepository,
-    private val workManager: WorkManager
+    private val notesRepository: NotesRepository
 ) : ViewModel() {
 
     val notesResponse: MutableLiveData<Resource<NotesResponse>> = MutableLiveData()
@@ -36,7 +35,6 @@ class NotesViewModel @ViewModelInject constructor(
 
     init {
         getNotes(true)
-        workManager.enqueue(OneTimeWorkRequest.from(NoteSyncWorker::class.java))
     }
 
     fun refreshNotes() = viewModelScope.launch(Dispatchers.IO) {
@@ -44,7 +42,7 @@ class NotesViewModel @ViewModelInject constructor(
             swipeRefreshStatus.postValue(Resource.Success(false))
             val notesFromApi = handleNotesResponse(notesRepository.getNotesFromApi(1))
             notesPage = 1
-            notesRepository.deleteAll()
+            notesRepository.deleteAllSync()
             notesResponse.postValue(notesFromApi)
             notesFromApi.data?.notes?.let { notesRepository.addAll(filterUnsyncedNotes(it)) }
             swipeRefreshStatus.postValue(Resource.Success(true))
@@ -59,7 +57,7 @@ class NotesViewModel @ViewModelInject constructor(
             val notesFromApi = handleNotesResponse(notesRepository.getNotesFromApi(notesPage++))
             if (firstCall) {
                 notesPage = 1
-                notesRepository.deleteAll()
+                notesRepository.deleteAllSync()
             }
             notesFromApi.data?.notes?.let {
                 notesRepository.addAll(filterUnsyncedNotes(it))
@@ -122,6 +120,9 @@ class NotesViewModel @ViewModelInject constructor(
         }
     }
 
+    fun deleteAllNotes() = viewModelScope.launch {
+        notesRepository.deleteAll()
+    }
 
     fun makeNotePublic(note: Note) = viewModelScope.launch {
         publicPrivateNoteHelper(makePublicNoteResponse, note, true)

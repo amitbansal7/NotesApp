@@ -2,6 +2,9 @@ package com.amitbansal.notesapp.ui.fragments
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -14,6 +17,7 @@ import com.amitbansal.notesapp.R
 import com.amitbansal.notesapp.adapters.NotesAdapter
 import com.amitbansal.notesapp.ui.viewmodels.NotesViewModel
 import com.amitbansal.notesapp.util.Resource
+import com.amitbansal.notesapp.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_notes.*
 
@@ -24,6 +28,15 @@ class NotesFragment : Fragment(R.layout.fragment_notes) {
 
     lateinit var notesAdapter: NotesAdapter
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,9 +48,28 @@ class NotesFragment : Fragment(R.layout.fragment_notes) {
             notesAdapter.differ.submitList(it)
         })
 
-        fab.setOnClickListener{
+        fab.setOnClickListener {
             findNavController().navigate(R.id.action_notesFragment_to_noteAddFragment)
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.itemLogout -> {
+                Toast.makeText(activity, "Logging out", Toast.LENGTH_SHORT).show()
+                logoutUser()
+                true
+            }
+            else ->
+                super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun logoutUser(){
+        Utils.deleteUserFromSharedPreferences()
+        Utils.deleteUser()
+        notesViewModel.deleteAllNotes()
+        findNavController().navigate(R.id.action_notesFragment_to_loginFragment)
     }
 
     private fun setupObservers() {

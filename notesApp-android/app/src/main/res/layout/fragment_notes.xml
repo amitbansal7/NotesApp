@@ -9,7 +9,7 @@
         android:id="@+id/ivNotes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="8dp"
         android:src="@drawable/ic_notes_white"
         app:layout_constraintBottom_toTopOf="@+id/swipeContainer"

@@ -21,8 +21,6 @@ class NoteSyncWorker @WorkerInject constructor(
     private val notesRepository: NotesRepository
 ) : CoroutineWorker(ctx, params) {
 
-    private val appContext = applicationContext
-
     override suspend fun doWork(): Result {
 
         Timber.d("Worker starting......")

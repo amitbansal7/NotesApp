@@ -15,6 +15,11 @@ object Utils {
     private const val USER = "user"
     private var user: User? = null
 
+    fun deleteUser(){
+        user = null
+        deleteUserFromSharedPreferences()
+    }
+
     fun getUser(): User? {
         return user ?: getUserFromSharedPreferences().also { user = it }
     }
